@@ -24,7 +24,9 @@ int main(int argc, char* argv[]) {
     manager.createFromFile("Employee.csv");
 
     // Searching for Employee IDs Using [manager.findAndPrintEmployee(id)]
-    /***TO_DO***/ 
-
+    int id;
+    while (cout << "Enter Employee ID (Ctrl+C to quit): " && cin >> id)
+        manager.findAndPrintEmployee(id);
+    
     return 0;
 }

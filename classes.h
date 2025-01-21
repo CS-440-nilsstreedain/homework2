@@ -29,16 +29,16 @@ public:
     void write_into_data_file(ostream& out) const {
         out.write(reinterpret_cast<const char*>(&id), sizeof(id));  // Write the integer ID
         out.write(name, sizeof(name));  // Write the fixed length name
-        /***TO_DO***/ // do the same thing for bio and manager-id
-
+        out.write(bio, sizeof(bio));  // Write the fixed length bio
+        out.write(reinterpret_cast<const char*>(&manager_id), sizeof(manager_id));  // Write the manager ID
     }
 
     // Read data from a binary input stream, i.e., EmployeeRelation.dat file to populate an Employee object
     void read_from_data_file(istream& in) {
         in.read(reinterpret_cast<char*>(&id), sizeof(id));  // Read the integer ID
         in.read(name, sizeof(name));  // Read the fixed length name
-        /***TO_DO***/ // do the same thing for bio and manager-id
-
+        in.read(bio, sizeof(bio));  // Read the fixed length bio
+        in.read(reinterpret_cast<char*>(&manager_id), sizeof(manager_id));  // Read the manager ID
     }
 
     // Print the Employee object to standard output
@@ -79,8 +79,17 @@ public:
         // Read each line from the CSV file, parse it, and create Employee objects
         while (getline(csvFile, line)) {
             
-            /***TO_DO***/ 
-            // Parse id, name, bio and manager-id from line, to create the Employee object below 
+            // Parse id, name, bio and manager-id from line, to create the Employee object below
+            stringstream ss(line);
+            string temp;
+
+            // Read id, name, bio, and manager-id from the CSV line
+            getline(ss, temp, ',');
+            id = stoi(temp);
+            getline(ss, name, ',');
+            getline(ss, bio, ',');
+            getline(ss, temp, ',');
+            manager_id = stoi(temp);
 
             Employee emp(id, name, bio, manager_id);  //create Employee objects
 
@@ -99,8 +108,18 @@ public:
         /*** TO_DO ***/
         // Use [emp.read_from_data_file(data_file)] to read lines from the datafile 
         // until you find the id you are looking for or reach the end-of-file (eof) 
+        while (data_file.peek() != EOF) {
+            // Read the next employee record from the data file
+            emp.read_from_data_file(data_file);
 
-       
+            // If the ID matches the search ID, print the employee details
+            if (emp.id == searchId) {
+                emp.print();  // Print the employee if found
+                return;
+            }
+        }
+        
         // Print not found message if no match
+        cout << "Employee with ID " << searchId << " not found." << endl;
     }
 };
